@@ -4,33 +4,158 @@ using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 
-//Definition for singly - linked list.
- public class ListNode
-{
-     public int val;
-     public ListNode next;
-     public ListNode(int val = 0, ListNode next = null)
-     {
-        this.val = val;
-        this.next = next;
-     }
- }
+
 public class Solution
 {
     public static void Main() //Made to test other functions.
     {
         while (true)
         {
-            int[] nums = {0,2,1,5,3,4};
-            int[] result = BuildArray(nums);
-            foreach (int num in result)
-                Console.Write(num + " , ");
+            // Insert any test case and function into this block to test
+            int num = 7;
+            int num2 = -3;
+            Console.WriteLine(Divide(num,num2));            
             Console.ReadKey();
         }
     }
 
 
+
     // LeetCode Algorithms
+
+    public static int Divide(int dividend, int divisor) // Divide without using /,*,or % operators
+    {
+        long result = 0;
+        int negativeChecker = dividend;        
+        long longDividend = Math.Abs(Convert.ToInt64(dividend));
+        long longDivisor = Math.Abs(Convert.ToInt64(divisor));
+        long resultIncrement = 1, subtractValue = longDivisor;
+        while (longDividend >= longDivisor)
+        {
+            if (longDividend >= subtractValue)
+            {
+                longDividend -= subtractValue;
+                result += resultIncrement;
+                subtractValue <<= 1;
+                resultIncrement <<= 1;
+            }
+            else
+            {
+                subtractValue >>= 1;
+                resultIncrement >>= 1;
+            }
+        }
+        if (negativeChecker < 0 && divisor > 0 || divisor < 0 && negativeChecker > 0)
+        {
+            long negativeResult = result;
+            for (int i = 0; i < 2; i++)
+                result -= negativeResult;
+        }
+        if (result > Int32.MaxValue)
+            return Int32.MaxValue;
+        return Convert.ToInt32(result);
+    }
+
+    public static string IntToRoman(int num) 
+    // NOTES: Tried to not use a dictionary, recursion would have made less readable code but faster and less memory than about 84%!
+    {
+        string result = "";
+        while(num > 0)
+        {
+            result += num switch
+            {
+                int i when i >= 1000 => "M",
+                int i when i < 1000 && i >= 900 => "CM",
+                int i when i < 900 && i >= 500 => "D",
+                int i when i < 500 && i >= 400 => "CD",
+                int i when i < 400 && i >= 100 => "C",
+                int i when i < 100 && i >= 90 => "XC",
+                int i when i < 90 && i >= 50 => "L",
+                int i when i < 50 && i >= 40 => "XL",
+                int i when i < 40 && i >= 10 => "X",
+                int i when i < 10 && i >= 9 => "IX",
+                int i when i < 9 && i >= 5 => "V",
+                int i when i < 5 && i >= 4 => "IV",
+                int i when i < 4 && i >= 1 => "I",
+            };
+            num -= num switch
+            {
+                int i when i >= 1000 => 1000,
+                int i when i < 1000 && i >= 900 => 900,
+                int i when i < 900 && i >= 500 => 500,
+                int i when i < 500 && i >= 400 => 400,
+                int i when i < 400 && i >= 100 => 100,
+                int i when i < 100 && i >= 90 => 90,
+                int i when i < 90 && i >= 50 => 50,
+                int i when i < 50 && i >= 40 => 40,
+                int i when i < 40 && i >= 10 => 10,
+                int i when i < 10 && i >= 9 => 9,
+                int i when i < 9 && i >= 5 => 5,
+                int i when i < 5 && i >= 4 => 4,
+                int i when i < 4 && i >= 1 => 1,
+            };
+        }
+        return result;
+    }
+
+    public static ListNode AddTwoNumbers(ListNode? l1, ListNode? l2, int carry)
+    {
+        int value = 0;
+        ListNode result;
+        if (l1 != null && l2 != null)
+        {
+            value = l1.val + l2.val + carry;
+            result = new(value % 10, AddTwoNumbers(l1.next, l2.next, value/10));
+        }          
+        else if (l1 == null && l2 == null)
+        {
+            if (carry == 1)
+                return new ListNode(1, null);
+            else
+                return null;
+        }     
+        else if (l2 == null)
+        {
+            value = l1.val + carry;
+            result = new(value % 10, AddTwoNumbers(l1.next, null, value/10));
+        }           
+        else
+        {
+            value = l2.val + carry;
+            result = new(value % 10, AddTwoNumbers(null, l2.next, value/10));
+        }                        
+        return result;
+    }
+    public static int[] PlusOne(int[] digits)
+    {
+        for (int i = digits.Length - 1; i >= 0; i--)
+        {
+            digits[i] = (digits[i] + 1) % 10;
+            // If no leftover, then we will just copy the rest of the array over and delete our first number
+            if (digits[i] != 0)
+            {
+                for (int j = i; j >= 0; j--)
+                    digits[i] = digits[i];
+                return digits;
+            }             
+        }
+        //In the case of 99 creating 100 and similar cases...
+        int[] leadingOne = new int[digits.Length+1];
+        leadingOne[0] = 1;
+        return leadingOne;
+    }
+    public static int LengthofLastString(string s)                                  // faster than 66.58% and less memory than 94.79%!
+    {
+        int length = 0;
+        for (int i = s.Length - 1; i >= 0; i--)
+        {
+            if (s[i] == ' ' && length > 0)
+                return length;
+            else if (s[i] != ' ')
+                length++;
+        }
+        return length;
+    }
 
     public static int SearchInsert(int[] nums, int target)                  // My first Binary Search
     {
@@ -662,6 +787,18 @@ public class Solution
         Console.WriteLine("    |  Y  |");
         Console.WriteLine("   /   |   \\");
         Console.WriteLine("   \"\"\"\" \"\"\"\"");
+    }
+
+    //Definition for singly - linked list.
+    public class ListNode
+    {
+        public int val;
+        public ListNode next;
+        public ListNode(int val = 0, ListNode next = null)
+        {
+            this.val = val;
+            this.next = next;
+        }
     }
 }
 
