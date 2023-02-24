@@ -3,6 +3,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
+using System.Collections;
 
 
 public class Solution
@@ -12,16 +13,50 @@ public class Solution
         while (true)
         {
             // Insert any test case and function into this block to test
-            int num = 7;
-            int num2 = -3;
-            Console.WriteLine(Divide(num,num2));            
+            int[] one = { 2,0 };//{ 1,2,3,0,0,0 };
+            int[] two = { 1 };//{2,5,6};
+            int m = 1, n = 1;
+            Merge(one, m, two, n);
+            foreach(int i in one)
+                Console.WriteLine(i);
             Console.ReadKey();
         }
     }
 
 
 
-    // LeetCode Algorithms
+    // LeetCode Algorithms   Time of O(m+n), beats 66.52% (or 97.44%, leetcode times make no sense) and standard in Memory (51.96%)
+    public static void Merge(int[] nums1, int m, int[] nums2, int n)
+    {
+        int twoPointer = n - 1, onePointer = m - 1;
+        for (int i = nums1.Length - 1; i >= 0; i--)
+        {
+            if (twoPointer < 0)
+            {
+                return;
+            }
+            else if (onePointer < 0)
+            {
+                for (int j = i; j >= 0; j--)
+                {
+                    nums1[j] = nums2[twoPointer];
+                    twoPointer--;
+                }                   
+                return;
+            }
+            switch(nums2[twoPointer] >= nums1[onePointer])
+            {
+                case true:
+                    nums1[i] = nums2[twoPointer];
+                    twoPointer--;
+                    break;
+                case false:
+                    nums1[i] = nums1[onePointer];
+                    onePointer--;
+                    break;
+            }
+        }
+    }
 
     public static int Divide(int dividend, int divisor) // Divide without using /,*,or % operators
     {
