@@ -13,20 +13,108 @@ public class Solution
         while (true)
         {
             // Insert any test case and function into this block to test
-            int[] one = { 2,0 };//{ 1,2,3,0,0,0 };
-            int[] two = { 1 };//{2,5,6};
-            int m = 1, n = 1;
-            Merge(one, m, two, n);
-            foreach(int i in one)
-                Console.WriteLine(i);
+            Console.WriteLine(LongestPalindrome("babad"));
+            Console.WriteLine(LongestPalindrome("cbbd"));
+            Console.WriteLine(LongestPalindrome("ccc"));
             Console.ReadKey();
         }
     }
 
 
 
-    // LeetCode Algorithms   Time of O(m+n), beats 66.52% (or 97.44%, leetcode times make no sense) and standard in Memory (51.96%)
-    public static void Merge(int[] nums1, int m, int[] nums2, int n)
+    // LeetCode Algorithms   
+
+    public static string LongestPalindrome(string s) //Original solution very slow (n^3), adapted this solution from one I saw in solutions
+    {
+        int start = 0, end = 0;
+        for (int i = 0; i < s.Length; i++)
+        {
+            int evenLength = ExpandPalindrome(s, i, i + 1);
+            int length = ExpandPalindrome(s, i, i);
+            length = Math.Max(evenLength, length);
+            if (length > end - start)
+            {
+                start = i - (length - 1) / 2;
+                end = i + length / 2;
+            }
+        }
+        return s.Substring(start, end - start + 1);
+    }
+    private static int ExpandPalindrome(string s, int left, int right)
+    {
+        while (left >= 0 && right < s.Length && s[left] == s[right])
+        {
+            left--;
+            right++;
+        }
+        return right - left - 1;
+    }
+
+    public static int LengthOfLongestSubstring(string s) // 74.5% in speed, poor in memory performance however
+    {
+        string subString = "", longestSubstring = "";
+        foreach (char c in s)
+        {
+            if (!subString.Contains(c))
+                subString += c;
+            else
+            {
+                subString = subString.Substring(subString.LastIndexOf(c)+1);
+                subString += c;
+            }
+            if (longestSubstring.Length < subString.Length)
+                longestSubstring = subString;
+        }
+        Console.WriteLine(longestSubstring);
+        return longestSubstring.Length;
+    }
+
+    public static double FindMedianSortedArrays(int[] nums1, int[] nums2) //Confused, leetcode time scaled from 5% (225ms) to 92% (90 ms), so I think it's good?
+    {
+        int twoPointer = nums2.Length-1, onePointer = nums1.Length-1;
+        int[] nums3 = new int[onePointer+twoPointer+2];
+        // merge 2 arrays into 3rd array
+        for (int i = nums3.Length - 1; i >= 0; i--)
+        {
+            if (twoPointer < 0)
+            {
+                for (int j = i; j >= 0; j--)
+                {
+                    nums3[j] = nums1[onePointer];
+                    onePointer--;
+                }
+                break;
+            }
+            else if (onePointer < 0)
+            {
+                for (int j = i; j >= 0; j--)
+                {
+                    nums3[j] = nums2[twoPointer];
+                    twoPointer--;
+                }
+                break;
+            }
+            switch (nums2[twoPointer] >= nums1[onePointer])
+            {
+                case true:
+                    nums3[i] = nums2[twoPointer];
+                    twoPointer--;
+                    break;
+                case false:
+                    nums3[i] = nums1[onePointer];
+                    onePointer--;
+                    break;
+            }
+        }
+        if (nums3.Length == 1)
+            return Convert.ToDouble(nums3[0]);
+        else if (!(nums3.Length % 2 == 0))
+            return Convert.ToDouble(nums3[nums3.Length/2]);
+        else
+            return (Convert.ToDouble(nums3[(nums3.Length/2) - 1]) + Convert.ToDouble(nums3[(nums3.Length / 2)])) / 2.0;
+    }
+
+    public static void Merge(int[] nums1, int m, int[] nums2, int n) //Time of O(m+n), beats 66.52% (or 97.44%, leetcode times make no sense) and standard in Memory (51.96%)
     {
         int twoPointer = n - 1, onePointer = m - 1;
         for (int i = nums1.Length - 1; i >= 0; i--)
