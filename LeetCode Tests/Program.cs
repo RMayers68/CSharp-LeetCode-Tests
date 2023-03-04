@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 using System.Collections;
+using System.Reflection;
 
 
 public class Solution
@@ -13,9 +14,10 @@ public class Solution
         while (true)
         {
             // Insert any test case and function into this block to test
-            Console.WriteLine(LongestPalindrome("babad"));
-            Console.WriteLine(LongestPalindrome("cbbd"));
-            Console.WriteLine(LongestPalindrome("ccc"));
+            Console.WriteLine(ZigZagConvert("PAYPALISHIRING",3));
+            Console.WriteLine(ZigZagConvert("PAYPALISHIRING", 4));
+            Console.WriteLine(ZigZagConvert("PAYPALISHIRING", 1));
+            Console.WriteLine(ZigZagConvert("PAYPALISHIRING", 5));
             Console.ReadKey();
         }
     }
@@ -23,6 +25,39 @@ public class Solution
 
 
     // LeetCode Algorithms   
+
+    public static string ZigZagConvert(string s, int numRows) // Average in terms of runtime O(3s), poor on memory
+    {
+        if (numRows == 1 ||)
+            return s;
+        string zigZag = "";
+        for (int i = numRows; i > 0; i--)
+        {
+            string tmp = "";
+            int index = i-1;
+            tmp += s[index];
+            s = s.Remove(index, 1);
+            while (index <= s.Length-1)
+            {
+                if (i < numRows)
+                {
+                    tmp += s[index];
+                    s = s.Remove(index, 1);
+                }
+                if (i > 1)
+                {
+                    index += i + i - 3;
+                }
+                if (index <= s.Length-1)
+                {
+                    tmp += s[index];
+                    s = s.Remove(index, 1);
+                }               
+            }
+            zigZag = tmp + zigZag;
+        }
+        return zigZag;
+    }
 
     public static string LongestPalindrome(string s) //Original solution very slow (n^3), adapted this solution from one I saw in solutions
     {
