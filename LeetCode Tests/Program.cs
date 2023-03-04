@@ -5,7 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Collections;
 using System.Reflection;
-
+using System.Xml;
 
 public class Solution
 {
@@ -14,10 +14,11 @@ public class Solution
         while (true)
         {
             // Insert any test case and function into this block to test
-            Console.WriteLine(ZigZagConvert("PAYPALISHIRING",3));
-            Console.WriteLine(ZigZagConvert("PAYPALISHIRING", 4));
-            Console.WriteLine(ZigZagConvert("PAYPALISHIRING", 1));
-            Console.WriteLine(ZigZagConvert("PAYPALISHIRING", 5));
+            Console.WriteLine(MyAtoi("+-12"));
+            Console.WriteLine(MyAtoi("     -42"));
+            Console.WriteLine(MyAtoi("4931 with words"));
+            Console.WriteLine(MyAtoi("    +9999999999999"));
+            Console.WriteLine(MyAtoi("words and 987"));
             Console.ReadKey();
         }
     }
@@ -26,9 +27,78 @@ public class Solution
 
     // LeetCode Algorithms   
 
+    public static int MyAtoi(string s) // 95% speed (50ms) but I feel like it can be compressed. 70% on memory
+    {
+        if (String.IsNullOrWhiteSpace(s))
+            return 0;
+        else if (s.Length == 1 && !Char.IsDigit(s[0]))
+            return 0;
+        int startIndex = 0, endIndex = s.Length, result = 0;
+        for (int i = 0; i < s.Length; i++)
+        {
+            switch (s[i])
+            {
+                default:
+                    if (Char.IsDigit(s[i]))
+                        break;
+                    else return 0;
+                case ' ':
+                    continue;
+                case '+' or '-':
+                    if (!Char.IsDigit(s[i + 1]))
+                        return 0;
+                    else
+                        break;
+            }
+            startIndex = i;
+            break;
+        }
+        s = s.Substring(startIndex);
+        for (int i = 1; i < s.Length; i++)
+        {
+
+            if (!Char.IsDigit(s[i]) )
+            {
+                endIndex = i;
+                break;
+            }
+        }
+        if (endIndex < s.Length)
+            s = s.Remove(endIndex);
+        if(!Int32.TryParse(s, out result))
+        {
+            if (s[0] == '-')
+                return Int32.MinValue;
+            else return Int32.MaxValue;
+        }
+        return result;
+    }
+
+    public static int ReverseInteger(int x) // 45% speed, low in memory ( decrease usage by modifying string in place rather than char array)
+    {
+        string xString = x.ToString();
+        char[] xCharArray = xString.ToCharArray();
+        Array.Reverse(xCharArray);
+        string xConvert = new(xCharArray);
+        if (xConvert[xConvert.Length-1] == '-')
+        {
+            xConvert = '-' + xConvert;
+            xConvert = xConvert.Remove(xConvert.Length-1);
+        }
+        try
+        {
+            x = Convert.ToInt32(xConvert);
+        }
+        catch (OverflowException)
+        {
+            return 0;
+        }        
+        return x;
+    }
+
     public static string ZigZagConvert(string s, int numRows) // Average in terms of runtime O(3s), poor on memory
     {
-        if (numRows == 1 ||)
+        if (s.Length - 1 < numRows)
             return s;
         string zigZag = "";
         for (int i = numRows; i > 0; i--)
