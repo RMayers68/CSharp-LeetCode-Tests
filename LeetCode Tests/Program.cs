@@ -14,11 +14,8 @@ public class Solution
         while (true)
         {
             // Insert any test case and function into this block to test
-            Console.WriteLine(MyAtoi("+-12"));
-            Console.WriteLine(MyAtoi("     -42"));
-            Console.WriteLine(MyAtoi("4931 with words"));
-            Console.WriteLine(MyAtoi("    +9999999999999"));
-            Console.WriteLine(MyAtoi("words and 987"));
+            //Console.WriteLine(AddBinary("11","1"));
+            Console.WriteLine(AddBinary("100","110010"));
             Console.ReadKey();
         }
     }
@@ -26,6 +23,31 @@ public class Solution
 
 
     // LeetCode Algorithms   
+    public static string AddBinary(string a, string b) // Original solution not good, learned this from leetcode website and improved (81 ms vs 84ms, 93.1% in memory) 
+    {
+        var res = "";
+        int i = a.Length - 1;
+        int j = b.Length - 1;
+        int carry = 0;
+
+        while (i >= 0 || j >= 0 || carry == 1)
+        {
+            if (i >= 0)
+            {
+                carry += a[i] - '0';
+                i--;
+            }
+            if (j >= 0)
+            {
+                carry += b[j] - '0';
+                j--;
+            }
+            res = carry % 2 + res;
+            carry /= 2;
+        }
+        GC.Collect();
+        return res;
+    }
 
     public static int MyAtoi(string s) // 95% speed (50ms) but I feel like it can be compressed. 70% on memory
     {
